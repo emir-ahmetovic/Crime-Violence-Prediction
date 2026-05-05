@@ -1,0 +1,158 @@
+1. Naive Bayes (Gaussian)
+python# NO tunable parameters in this implementation!
+# It's parameter-free (just uses Gaussian distribution assumptions)
+Tuning settings: None - it just calculates probabilities from the data.
+
+2. K-Nearest Neighbors (KNN)
+pythonKNN_K: int = 7  # Number of neighbors to consider
+Tunable settings:
+
+k (n_neighbors): How many similar crimes to look at?
+
+Lower k (e.g., 3) = more sensitive to noise
+Higher k (e.g., 15) = smoother, but might miss patterns
+Current: 7
+
+
+Distance metric (not tuned here): Euclidean, Manhattan, etc.
+Weights (not tuned here): uniform vs distance-weighted
+
+
+3. Decision Tree
+pythonDT_MAX_DEPTH: int = 10
+DT_MIN_SAMPLES_SPLIT: int = 200
+DT_MIN_SAMPLES_LEAF: int = 100
+USE_CLASS_WEIGHT: bool = True
+Tunable settings:
+
+max_depth: How deep can the tree grow?
+
+Range tested: [8, 10, 12, 15]
+Deeper = more complex patterns, but risk overfitting
+
+
+min_samples_split: Minimum samples needed to split a node
+
+Range tested: [100, 200, 300]
+Higher = more conservative, simpler tree
+
+
+min_samples_leaf: Minimum samples in each leaf
+
+Range tested: [50, 100, 150]
+Higher = prevents tiny, specific leaves
+
+
+ccp_alpha (pruning): How aggressively to prune weak branches
+
+Range tested: [0.000001 to 0.01] (20 values, geometric spacing)
+Higher = more pruning = simpler tree
+
+
+class_weight: Should it balance the classes?
+
+Set to: 'balanced' (gives more weight to rare class)
+
+
+
+How it's tuned: RandomizedSearchCV tests 40 random combinations of these parameters.
+
+4. Random Forest
+pythonRF_N_ESTIMATORS: int = 100
+RF_MAX_DEPTH: int = 15
+RF_MIN_SAMPLES_SPLIT: int = 100
+RF_MIN_SAMPLES_LEAF: int = 50
+Tunable settings:
+
+n_estimators: How many trees in the forest?
+
+Current: 100
+More trees = better but slower (diminishing returns after ~100-200)
+
+
+max_depth: Maximum depth of each tree
+
+Current: 15
+Since it's an ensemble, individual trees can be deeper than single tree
+
+
+min_samples_split: Same as Decision Tree
+
+Current: 100
+
+
+min_samples_leaf: Same as Decision Tree
+
+Current: 50
+
+
+class_weight:
+
+Set to: 'balanced'
+
+
+
+Not tuned in this code (but could be):
+
+max_features: How many features each tree sees
+bootstrap: Whether to sample with replacement
+
+
+5. Gradient Boosting
+pythonGB_N_ESTIMATORS: int = 100
+GB_MAX_DEPTH: int = 6
+GB_LEARNING_RATE: float = 0.1
+Tunable settings:
+
+n_estimators: How many sequential trees?
+
+Current: 100
+More = better learning but risk overfitting
+
+
+max_depth: Depth of each tree
+
+Current: 6
+Usually shallower than Random Forest (each tree corrects previous)
+
+
+learning_rate: How much each tree contributes
+
+Current: 0.1
+Lower = more conservative = need more trees
+Range typically: [0.01 to 0.3]
+
+
+
+Not tuned in this code (but could be):
+
+subsample: Fraction of samples for each tree
+min_samples_split, min_samples_leaf
+
+
+6. PEBLS
+pythonPEBLS_MAX_EXEMPLARS: int = 25_000      # How many crimes to remember
+PEBLS_EPOCHS: int = 2                  # Weight tuning iterations
+PEBLS_TUNE_EXEMPLARS: int = 3_000      # How many to use for tuning
+PEBLS_TUNE_CANDIDATES: int = 2_000     # Candidates per tuning iteration
+PEBLS_PRED_MAX_CANDIDATES: int = 5_000 # Max to consider at prediction
+Tunable settings:
+
+r: VDM distance exponent (current: 1)
+p: Feature distance exponent (current: 2)
+k: Number of neighbors (current: 1 - just nearest)
+max_exemplars: Memory limit
+
+Current: 25,000
+More = better coverage but slower
+
+
+epochs: How many weight-tuning passes?
+
+Current: 2
+More = better weights but slower training
+
+
+tune_exemplars/candidates: Controls tuning thoroughness
+
+More = better tuning but much slower
